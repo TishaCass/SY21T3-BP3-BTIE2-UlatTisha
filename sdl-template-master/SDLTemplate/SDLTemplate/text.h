@@ -25,5 +25,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 extern void blitRect(SDL_Texture* texture, SDL_Rect* src, int x, int y);
 extern SDL_Texture* loadTexture(char* filename);
 
+
 void initFonts(void);
 void drawText(int x, int y, int r, int g, int b, int align, const char* format, ...);

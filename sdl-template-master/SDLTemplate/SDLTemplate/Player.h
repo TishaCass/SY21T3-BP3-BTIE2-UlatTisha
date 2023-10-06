@@ -16,9 +16,13 @@ public:
 
 	int getPositionX();
 	int getPositionY();
+	int getWidth();
+	int getHeight();
+	bool getIsAlive();
+	void doDeath();
 
 private:
-	SDL_Texture* texture;
+	SDL_Texture* playerShip;
 	Mix_Chunk* sound;
 	int x;
 	int y;
@@ -31,5 +35,6 @@ private:
 	float reloadTimeWing;
 	float currentReloadTimeWing;
 	std::vector<Bullet*> bullets;
+	bool isAlive;
 };
 

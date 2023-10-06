@@ -19,7 +19,11 @@ public:
 	void draw();
 	void setPlayerTarget(Player* player);
 	void setPosition(int xPos, int yPos);
-	float getPositionX();
+	
+	int getPositionX();
+	int getPositionY();
+	int getWidth();
+	int getHeight();
 
 private:
 	SDL_Texture* texture;
