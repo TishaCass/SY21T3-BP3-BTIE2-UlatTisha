@@ -12,19 +12,22 @@ Player::~Player()
 void Player::start()
 {
 	//load Texture
-	playerShip = loadTexture("gfx/player.png");
+	playerShip = loadTexture("gfx/playerRotate.png");
 
 	//Initialize Variables
 	x = 100;
-	y = 100;
-	width = 0;
-	height = 0;
-	speed = 2;
-	speedBoost = 5;
-	reloadTime = 8;
+	y = SCREEN_HEIGHT - 100;
+	width = 4;
+	height = 4;
+	speed = 3;
+	speedBoost = 6;
+	reloadTime = 14;
 	currentReloadTime = 0;
-	reloadTimeWing = 10;
+
+	reloadTimeWing = 18;
 	currentReloadTimeWing = 0;
+	isPowerUpActive = false;
+
 	isAlive = true;
 
 	//Query the texture for width and height
@@ -82,37 +85,51 @@ void Player::update()
 	if (currentReloadTime > 0)
 		currentReloadTime--;
 
+	// decrement the player's reload timer
+	if (currentReloadTime > 0)
+		currentReloadTime--;
+
 	if (app.keyboard[SDL_SCANCODE_F] && currentReloadTime == 0)
 	{
 		SoundManager::playSound(sound);
-		Bullet* bullet = new Bullet(x + width, y - 2 + height / 2, 1, 0, 10, Side::PLAYER_SIDE);
-		bullets.push_back(bullet);
-		getScene()->addGameObject(bullet);
 
-		// After firing reset reload time
+		if (isPowerUpActive)
+		{
+			Bullet* bulletCenter = new Bullet(x - 2 + width / 2, y - 30, 0, -1, 10, Side::PLAYER_SIDE);
+			bullets.push_back(bulletCenter);
+			getScene()->addGameObject(bulletCenter);
+
+			Bullet* bulletLeft = new Bullet(this->getPositionX(), this->getPositionY(), 0, -1, 10, Side::PLAYER_SIDE);
+			bullets.push_back(bulletLeft);
+			getScene()->addGameObject(bulletLeft);
+			bulletLeft->start();
+
+			Bullet* bulletRight = new Bullet(this->getPositionX() + 35, this->getPositionY(), 0, -1, 10, Side::PLAYER_SIDE);
+			bullets.push_back(bulletRight);
+			getScene()->addGameObject(bulletRight);
+
+			currentReloadTimeWing = reloadTimeWing;
+		}
+		else
+		{
+			// If power-up is not active, shoot a single bullet
+			Bullet* bullet = new Bullet(x - 2 + width / 2, y - 30, 0, -1, 10, Side::PLAYER_SIDE);
+			bullets.push_back(bullet);
+			getScene()->addGameObject(bullet);
+		}
+
 		currentReloadTime = reloadTime;
 	}
 
-	if (currentReloadTimeWing > 0)
-		currentReloadTimeWing--;
-
-	if (app.keyboard[SDL_SCANCODE_G] && currentReloadTimeWing == 0)
+	if (isPowerUpActive && currentPowerUpDuration > 0)
 	{
-		SoundManager::playSound(sound);
-		Bullet* bulletUp = new Bullet(x + 5, y, 1, 0, 10, Side::PLAYER_SIDE);
-		bullets.push_back(bulletUp);
-		getScene()->addGameObject(bulletUp);
-		bulletUp->start();
+		currentPowerUpDuration--;
 
-		Bullet* bulletDown = new Bullet(x + 5, y + 35, 1, 0, 10, Side::PLAYER_SIDE	);
-		bullets.push_back(bulletDown);
-		getScene()->addGameObject(bulletDown);
-		bulletDown->start();
-
-		// After firing reset reload time
-		currentReloadTimeWing = reloadTimeWing;
+		if (currentPowerUpDuration == 0)
+		{
+			isPowerUpActive = false;
+		}
 	}
-
 }
 
 void Player::draw()
@@ -120,7 +137,6 @@ void Player::draw()
 	//draw texture
 	if (!isAlive) return;
 		blit(playerShip, x, y);
-	
 }
 
 int Player::getPositionX()
@@ -151,4 +167,10 @@ bool Player::getIsAlive()
 void Player::doDeath()
 {
 	isAlive = false;
+}
+
+void Player::doPowerUp()
+{
+	isPowerUpActive = true;
+	currentPowerUpDuration = powerUpDuration;
 }

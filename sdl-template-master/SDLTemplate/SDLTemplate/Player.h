@@ -21,6 +21,8 @@ public:
 	bool getIsAlive();
 	void doDeath();
 
+	void doPowerUp();
+
 private:
 	SDL_Texture* playerShip;
 	Mix_Chunk* sound;
@@ -32,8 +34,13 @@ private:
 	int speedBoost;
 	float reloadTime;
 	float currentReloadTime;
+
 	float reloadTimeWing;
 	float currentReloadTimeWing;
+	bool isPowerUpActive = false;
+	int powerUpDuration = 500; 
+	int currentPowerUpDuration = 0;
+
 	std::vector<Bullet*> bullets;
 	bool isAlive;
 };

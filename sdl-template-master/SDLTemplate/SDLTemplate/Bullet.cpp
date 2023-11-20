@@ -17,7 +17,7 @@ void Bullet::start()
 
 	if (side == Side::PLAYER_SIDE)
 	{
-		texture = loadTexture("gfx/playerBullet.png");
+		texture = loadTexture("gfx/playerBulletRotate.png");
 	}
 
 	else

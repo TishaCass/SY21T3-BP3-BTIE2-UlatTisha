@@ -11,7 +11,7 @@ Enemy::~Enemy()
 void Enemy::start()
 {
 	//load Texture
-	texture = loadTexture("gfx/enemy.png");
+	texture = loadTexture("gfx/enemyRotate.png");
 
 	//Initialize Variables
 	directionX = -1;
@@ -33,54 +33,59 @@ void Enemy::start()
 
 void Enemy::update()
 {
-	//move
-	x += directionX * speed;
-	y += directionY * speed;
+    // Move horizontally
+    x += directionX * speed;
 
-	//Basic AI, switch direction every X seconds
-	if (currentDirectionChangeTime > 0)
-		currentDirectionChangeTime--;
+    // Basic AI, switch direction every X seconds
+    if (currentDirectionChangeTime > 0)
+        currentDirectionChangeTime--;
 
-	if (currentDirectionChangeTime == 0)
-	{
-		//Flip diretions
-		directionY = -directionY;
-		currentDirectionChangeTime = directionChangeTime;
-	}
+    if (currentDirectionChangeTime == 0)
+    {
+        // Flip directions in the horizontal axis
+        directionX = -directionX;
+        currentDirectionChangeTime = directionChangeTime;
+    }
 
-	//Decrement the enemy's reload timer
-	if (currentReloadTime > 0)
-		currentReloadTime--;
+    // Move downward
+    y += directionY * speed;
 
-	//Only fire when reload time is ready
-	if (currentReloadTime == 0)
-	{
-		float dx = -1;
-		float dy = 0;
+    // Decrement the enemy's reload timer
+    if (currentReloadTime > 0)
+        currentReloadTime--;
 
-		calcSlope(playerTarget->getPositionX(), playerTarget->getPositionY(), x, y, &dx, &dy);
+    // Only fire when reload time is ready
+    if (currentReloadTime == 0)
+    {
+        // Calculate slope towards the player
+        float dx = 0;
+        float dy = 0;
 
-		SoundManager::playSound(sound);
-		Bullet* bullet = new Bullet(x + width, y - 2 + height / 2, dx, dy, 10, Side::ENEMY_SIDE);
-		bullets.push_back(bullet);
-		getScene()->addGameObject(bullet);
+        calcSlope(playerTarget->getPositionX(), playerTarget->getPositionY(), x, y, &dx, &dy);
 
-		// After firing reset reload time
-		currentReloadTime = reloadTime;
-	}
+        // Play sound and fire bullet
+        SoundManager::playSound(sound);
+        Bullet* bullet = new Bullet(x - 2 + width / 2, y - 30, dx, dy, 10, Side::ENEMY_SIDE);
+        bullets.push_back(bullet);
+        getScene()->addGameObject(bullet);
 
-	for (int i = 0; i < bullets.size(); i++)
-	{
-		if (bullets[i]->getPositionX() < 0)
-		{
-			// Cache the variable so we can delete it later
-			Bullet* bulletToErase = bullets[i];
-			bullets.erase(bullets.begin() + i);
-			delete bulletToErase;
+        // After firing reset reload time
+        currentReloadTime = reloadTime;
+    }
 
-			break;
-		}
-	}
+    // Check and handle bullet removal
+    for (int i = 0; i < bullets.size(); i++)
+    {
+        if (bullets[i]->getPositionX() < 0)
+        {
+            // Cache the variable so we can delete it later
+            Bullet* bulletToErase = bullets[i];
+            bullets.erase(bullets.begin() + i);
+            delete bulletToErase;
+
+            break;
+        }
+    }
 }
 
 void Enemy::draw()

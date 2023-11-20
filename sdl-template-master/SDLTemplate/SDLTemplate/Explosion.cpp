@@ -13,9 +13,9 @@ Explosion::Explosion(float positionX, float positionY, float width, float height
 
 void Explosion::start()
 {
-	time = 40;
+	time = 40; 
 
-	explode = loadTexture("gfx/explosion.png");
+	explode = loadTexture("gfx/Explosion.png");
 
 	SDL_QueryTexture(explode, NULL, NULL, &width, &height);
 }
