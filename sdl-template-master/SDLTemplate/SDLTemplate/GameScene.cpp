@@ -58,6 +58,11 @@ void GameScene::draw()
     {
         drawText(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 6, 225, 225, 225, TEXT_CENTER, "GAME OVER!");
     }
+
+    if (bossSpawned == true)
+    {
+        drawText(600, 20, 225, 225, 225, TEXT_CENTER, "BOSS HP: %03d", HP);
+    }
 }
 
 void GameScene::update()
@@ -98,7 +103,7 @@ void GameScene::doSpawnLogin()
     if (currentSpawnTimer <= 0)
     {
         currentSpawnTimer = spawnTimer;
-            spawn();
+        spawn();
     }
 
     if (currentPowerUpSpawn > 0)
@@ -113,6 +118,8 @@ void GameScene::doSpawnLogin()
 
 void GameScene::doCollisionLogic()
 {
+    std::vector<Bullet*> bulletsMarkedForDeletion;
+
     // Checking for collisions with enemies
     for (int i = 0; i < objects.size(); i++)
     {
@@ -149,6 +156,7 @@ void GameScene::doCollisionLogic()
                         explosion(currentEnemy);
                         despawnEnemy(currentEnemy);
                         points++;
+                        bulletsMarkedForDeletion.push_back(bullet);
                         break;
                     }
                 }
@@ -166,15 +174,21 @@ void GameScene::doCollisionLogic()
 
                         if (collision == 1)
                         {
+                            std::cout << "enemy hit. HP before" << currentBoss->getHealth() << std::endl;
                             currentBoss->setHealth(currentBoss->getHealth() - 1);
+                            std::cout << " After" << currentBoss->getHealth() << std::endl;
 
                             if (currentBoss->getHealth() <= 0)
                             {
                                 // Boss is defeated, remove and delete it
                                 despawnBoss(currentBoss);
                             }
+
+                            bulletsMarkedForDeletion.push_back(bullet);
+                            break;
                         }
                     }
+                    HP = currentBoss->getHealth();
                 }
             }
         }
@@ -197,6 +211,16 @@ void GameScene::doCollisionLogic()
             }
         }
     }
+
+    // Remove bullets after the loop
+    for (int i = 0; i < bulletsMarkedForDeletion.size(); i++)
+    {
+        Bullet* bulletsToRemove = bulletsMarkedForDeletion[i];
+        bulletsMarkedForDeletion.erase(bulletsMarkedForDeletion.begin() + i);
+        delete bulletsToRemove;
+        break;
+    }
+
 
     // Check if enemies have moved out of the screen and remove them
     for (int i = 0; i < spawnedEnemies.size(); i++)
@@ -261,7 +285,7 @@ void GameScene::spawnPowerUp()
 void GameScene::spawnBoss()
 {
     // Check if points are greater than or equal to a threshold and there is no existing boss
-    if (points == 3 && spawnedBoss.size() == 0 && bossSpawned == false)
+    if (points == 15 && spawnedBoss.size() == 0 && bossSpawned == false)
     {
         Boss* boss = new Boss();
         this->addGameObject(boss);

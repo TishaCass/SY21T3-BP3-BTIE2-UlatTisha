@@ -36,7 +36,7 @@ private:
 	std::vector<Explosion*> explosions;
 	std::vector<PowerUp*> powerUps;
 	std::vector<Boss*> spawnedBoss;
-
+	std::vector<Bullet*> bulletsToErase;
 
 	void doSpawnLogin();
 	void doCollisionLogic();
@@ -51,6 +51,7 @@ private:
 	void spawnBoss();
 	void despawnBoss(Boss* boss);
 	int points; 
+	int HP;
 
 	bool bossSpawned;
 };

@@ -16,14 +16,14 @@ void Boss::start()
     //Initialize Variables
     directionX = -1;
     directionY = 1;
-    width = 6;
-    height = 6;
+    width = 4;
+    height = 4;
     speed = 2;
     reloadTime = 60;
     currentReloadTime = 0;
     directionChangeTime = (rand() % 100) + 100; // Direction change time 3-8 seconds
     currentDirectionChangeTime = 0;
-    health = 200; //initialize boss hp
+    health = 50; //initialize boss hp
 
     //Query the texture for width and height
     SDL_QueryTexture(texture, NULL, NULL, &width, &height);
