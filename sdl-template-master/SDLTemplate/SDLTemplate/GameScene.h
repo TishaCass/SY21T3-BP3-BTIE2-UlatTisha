@@ -9,6 +9,7 @@
 #include "draw.h"
 #include "Explosion.h"
 #include "PowerUp.h"
+#include "Boss.h"
 
 class GameScene : public Scene
 {
@@ -30,11 +31,11 @@ private:
 	float currentSpawnTimer;
 	float PowerUpSpawn;
 	float currentPowerUpSpawn;
-	
 
 	std::vector<Enemy*> spawnedEnemies;
 	std::vector<Explosion*> explosions;
 	std::vector<PowerUp*> powerUps;
+	std::vector<Boss*> spawnedBoss;
 
 
 	void doSpawnLogin();
@@ -47,6 +48,10 @@ private:
 
 	void spawnPowerUp();
 
+	void spawnBoss();
+	void despawnBoss(Boss* boss);
 	int points; 
+
+	bool bossSpawned;
 };
 

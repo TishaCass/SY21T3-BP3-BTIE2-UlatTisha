@@ -174,3 +174,4 @@ void Player::doPowerUp()
 	isPowerUpActive = true;
 	currentPowerUpDuration = powerUpDuration;
 }
+

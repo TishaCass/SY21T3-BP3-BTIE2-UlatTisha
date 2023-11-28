@@ -1,5 +1,5 @@
 #include "Enemy.h"
-#include "Scene.h"
+
 Enemy::Enemy()
 {
 }

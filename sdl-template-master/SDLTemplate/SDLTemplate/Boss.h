@@ -7,24 +7,27 @@
 #include <vector>
 #include "util.h"
 #include "Player.h"
-#include "scene.h"
+#include "Scene.h"
 
-class Enemy : public GameObject
+class Boss :
+    public GameObject
 {
 public:
-	Enemy();
-	~Enemy();
+	Boss();
+	~Boss();
 
 	void start();
 	void update();
 	void draw();
 	void setPlayerTarget(Player* player);
 	void setPosition(int xPos, int yPos);
-	
+	void setHealth(int newHealth);
+
 	int getPositionX();
 	int getPositionY();
 	int getWidth();
 	int getHeight();
+	int getHealth();
 
 private:
 	SDL_Texture* texture;
@@ -43,5 +46,6 @@ private:
 	float directionChangeTime;
 	float currentDirectionChangeTime;
 	std::vector<Bullet*> bullets;
+	float health;
 };
 
