@@ -136,7 +136,7 @@ void Player::draw()
 {
 	//draw texture
 	if (!isAlive) return;
-		blit(playerShip, x, y);
+	blit(playerShip, x, y);
 }
 
 int Player::getPositionX()
