@@ -3,8 +3,8 @@
 GameScene::GameScene()
 {
 	// Register and add game objects on constructor
-	player = new Snake();
-	this->addGameObject(player);
+	snake = new Snake();
+	this->addGameObject(snake);
 }
 
 GameScene::~GameScene()
@@ -22,6 +22,7 @@ void GameScene::start()
 	background = loadTexture("gfx/background.png");
 
 	fruitSpawnInterval = 30;
+	bodyInterval = 30;
 }
 
 void GameScene::draw()
@@ -34,32 +35,104 @@ void GameScene::draw()
 	if (!spawnedFruit.empty())
 	{
 		newFruit = spawnedFruit[0];
-		newFruit->draw();
+		if (newFruit)
+		{
+			newFruit->draw();
+		}
 	}
 
-	player->draw();
+	snake->draw();
+
+	for (int i = 0; i < bodySegments.size(); i++)
+	{
+		bodySegments[i]->draw();
+	}
 }
 
 void GameScene::update()
 {
 	Scene::update();
 
-	if (player->getPositionX() < 30 || player->getPositionX() > 600 || player->getPositionY() < 30 || player->getPositionY() > 600)
+	if (snake->getPositionX() < 30 || snake->getPositionX() > 600 || snake->getPositionY() < 30 || snake->getPositionY() > 600)
 	{
-		player->doDeath();
+		snake->doDeath();
 	}
+
+	for (int i = bodySegments.size() - 1; i > 0; --i)
+	{
+		bodySegments[i]->setPosition(bodySegments[i - 1]->getPositionX(), bodySegments[i - 1]->getPositionY());
+	}
+
+	if (bodySegments.size() > 0)
+	{
+		bodySegments[0]->setPosition(snake->getPreviousPositionX(), snake->getPreviousPositionY());
+	}
+
+	checkCollisionFruit();
+	checkCollisionBody();
+
+	snake->update();
 }
 
 void GameScene::spawnFruit()
 {
-	if (spawnedFruit.empty())
+	Fruit* anotherFruit = new Fruit();
+	this->addGameObject(anotherFruit);
+	spawnedFruit.push_back(anotherFruit);
+}
+
+void GameScene::despawnFruit()
+{
+	if (!spawnedFruit.empty())
 	{
-		Fruit* anotherfruit = new Fruit();
-		this->addGameObject(anotherfruit);
-		spawnedFruit.push_back(anotherfruit);
+		delete spawnedFruit[0];
+		spawnedFruit.erase(spawnedFruit.begin());
 	}
 }
 
-void GameScene::checkCollision()
+void GameScene::checkCollisionFruit()
 {
+	if (!spawnedFruit.empty())
+	{
+		Fruit* currentFruit = spawnedFruit[0];
+		if (snake->getPositionX() == currentFruit->getPositionX() && snake->getPositionY() == currentFruit->getPositionY())
+		{
+			spawnFruit(); 
+			spawnBodySegment();
+			delete currentFruit;  
+			spawnedFruit.erase(spawnedFruit.begin());  
+		}
+	}
+}
+
+void GameScene::checkCollisionBody()
+{
+	for (int i = 0; i < bodySegments.size(); i ++)
+	{
+		if (snake->getPositionX() == bodySegments[i]->getPositionX() && snake->getPositionY() == bodySegments[i]->getPositionY())
+		{
+			snake->doDeath();
+			break;  
+		}
+	}
+}
+
+void GameScene::spawnBodySegment()
+{
+	Body* anotherSegment = new Body();
+	this->addGameObject(anotherSegment);
+	bodySegments.push_back(anotherSegment);
+
+	if (bodySegments.size() > 1)
+	{
+		for (int i = bodySegments.size() - 1; i > 0; i--)
+		{
+			int lastIndex = i - 1;
+			anotherSegment->setPosition(bodySegments[lastIndex]->getPositionX(), bodySegments[lastIndex]->getPositionY());
+		}
+	}
+	else
+	{
+		anotherSegment->setPosition(snake->getPreviousPositionX(), snake->getPreviousPositionY());
+	}
 }

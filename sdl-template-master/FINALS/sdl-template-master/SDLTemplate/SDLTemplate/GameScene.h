@@ -5,8 +5,7 @@
 #include "Snake.h"
 #include "Fruit.h"
 #include "Body.h"
-#include <deque>
-
+#include "text.h"
 
 class GameScene : public Scene
 {
@@ -18,8 +17,10 @@ public:
 	void update();
 
 	void spawnFruit();
-
-	void checkCollision();
+	void despawnFruit();
+	void checkCollisionFruit();
+	void checkCollisionBody();
+	void spawnBodySegment();
 
 private:
 	SDL_Texture* background;
@@ -27,9 +28,11 @@ private:
 	int screenWidth;
 	int screenHeight;
 	int fruitSpawnInterval;
+	int bodyInterval;
 
-	Snake* player;
+	Snake* snake;
 	Fruit* newFruit;
 
 	std::vector<Fruit*> spawnedFruit;
+	std::vector<Body*> bodySegments;
 };

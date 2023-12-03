@@ -2,11 +2,11 @@
 
 Fruit::Fruit()
 {
-    // Load the texture and initialize other members in the constructor
-    fruit = loadTexture("gfx/fruit.png");
+	// Load the texture and initialize other members in the constructor
+	fruit = loadTexture("gfx/fruit.png");
 
-    width = 30;
-    height = 30;
+	width = 30;
+	height = 30;
 
 	// Initialize x and y within the desired range
 	x = (rand() % (600 / fruitInterval) * fruitInterval) + 30;
@@ -15,7 +15,6 @@ Fruit::Fruit()
 
 Fruit::~Fruit()
 {
-	delete fruit;
 }
 
 void Fruit::start()
